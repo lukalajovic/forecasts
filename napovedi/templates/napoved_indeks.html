@@ -1,0 +1,268 @@
+  <html>
+  <head>
+	 <meta charset="utf-8">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>	
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	
+	
+    <script type="text/javascript">
+	
+	
+	
+	
+	
+	
+	
+	
+	//količina ki jo merimo oziroma napovedujemo npr teža
+	var kategorije=["ATV","ATT","AKG","DPR","SDM","PON","DT","PRE","VZG","T60","T600"]
+	var mera="ATV"
+	var stran_aktivnosti="https://www.e-gibalec.si/api2/index/ATTqqq1900"
+	var indeks='1900'
+
+
+
+    google.charts.load('current', {'packages':['line']});
+    google.charts.setOnLoadCallback(drawChart);
+	  
+	  
+
+    function drawChart() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('number', 'leto');
+      data.addColumn('number', 'forecast');
+      data.addColumn('number', 'real');
+	  
+	  var podatki=[];
+	  
+
+	  
+	  
+	  $.getJSON(stran_aktivnosti, function (json) {
+	  var j=1;
+	  $.each(json, function (i, fb) {
+		podatki.push([j+6,fb[0], fb[1]]);
+
+		j=j+1;
+		});	  
+	  
+	
+      data.addRows(podatki)
+	
+	var naslov='Forecast of mass and real mass';
+	var podnaslov='In kg';
+	
+	if(mera=='ATT'){	
+	naslov='Forecast of mass and real mass';
+	podnaslov='In kg';
+	}
+	
+	if(mera=='ATV'){	
+
+ 	naslov='Forecast of height and real height';
+	podnaslov='In cm';
+	}
+	if(mera=='BMI'){	
+	naslov='Forecast of bmi and real bmi';
+	podnaslov='In kg/m^2%';
+	}
+ 
+ 	if(mera=='T600'){	
+	naslov='Forecast of 600 meter dash';
+	podnaslov='in seconds';
+	}
+	if(mera=='DT'){	
+	naslov='Forecast of sit ups and real sit ups';
+	podnaslov='In 1 minute'
+	}
+    var options = {
+        chart: {
+          title: naslov,
+          subtitle: podnaslov
+        },
+        width: {{n}}*100,
+        height: 500
+      };
+
+      var chart = new google.charts.Line(document.getElementById('linechart_material'));
+
+      chart.draw(data, google.charts.Line.convertOptions(options));
+	  
+
+	  
+	  
+	}); 
+}
+
+function drawChart_risk() {
+      var dataTable = [["asdasd", "asdasd"]]
+
+      var stran_aktivnosti= "http://127.0.0.1:8000/api2/risk/"+indeks;
+      $.getJSON(stran_aktivnosti, function (json) {
+        var sum1 = 0;
+        $.each(json, function (i, fb) {
+          dataTable.push([fb[0], fb[1]])
+           });
+        console.log(dataTable)
+        var data = google.visualization.arrayToDataTable(dataTable);        console.log(data) 
+        var options = {
+        fontName:"inherit",
+          fontSize:"14",
+          backgroundColor: '#0e9ec7',
+          colors: ['#ffba68', '#d155af', '#ffe568', '#5cbcd8', '#ff8f0a','#be1d5e', '#0bb342', '#fff200', '#bd8cbf', '#094eac']
+        };
+
+  // Optional; add a title and set the width and height of the chart
+  var options = {'title':'Health risk', 'width':550, 'height':400,pieSliceText: 'value'};
+
+  // Display the chart inside the <div> element with id="piechart"
+  var chart = new google.visualization.PieChart(document.getElementById('linechart_material'));
+  chart.draw(data, options);
+  }); 
+}
+
+
+
+var skrito=true;
+$(document).ready(function(){
+
+	
+	
+
+	$("#submit").click(function(){
+			indeks=$('#indeks').val();
+			$("#ime").text("The current index is "+indeks);
+
+
+
+
+	})
+	
+	$("#masa").click(function(){
+		mera="ATT";
+		$("#masa").css("color", "red");
+		$("#visina").css("color", "black");
+		$("#bmi").css("color", "black");
+		$("#trebuh").css("color", "black");
+		$("#tek").css("color", "black");
+		$("#tveganje").css("color", "black");			
+		stran_aktivnosti="https://www.e-gibalec.si/api2/index/"+mera+"qqq"+indeks;
+		google.charts.load('current', {'packages':['line']});
+		google.charts.setOnLoadCallback(drawChart);		
+	})
+	
+	$("#visina").click(function(){
+		mera="ATV";
+		$("#masa").css("color", "black");
+		$("#visina").css("color", "red");
+		$("#bmi").css("color", "black");
+		$("#trebuh").css("color", "black");
+		$("#tek").css("color", "black");			
+		$("#tveganje").css("color", "black");			
+		stran_aktivnosti="https://www.e-gibalec.si/api2/index/"+mera+"qqq"+indeks;
+		google.charts.load('current', {'packages':['line']});
+		google.charts.setOnLoadCallback(drawChart);		
+	})
+	$("#bmi").click(function(){
+		mera="BMI";
+		$("#masa").css("color", "black");
+		$("#visina").css("color", "black");
+		$("#bmi").css("color", "red");
+		$("#trebuh").css("color", "black");
+		$("#tek").css("color", "black");				
+		$("#tveganje").css("color", "black");			
+		
+		stran_aktivnosti="https://www.e-gibalec.si/api2/index/"+mera+"qqq"+indeks;
+		google.charts.load('current', {'packages':['line']});
+		google.charts.setOnLoadCallback(drawChart);
+	})
+	$("#tek").click(function(){
+		mera="T600";
+		$("#masa").css("color", "black");
+		$("#visina").css("color", "black");
+		$("#bmi").css("color", "black");
+		$("#trebuh").css("color", "black");
+		$("#tek").css("color", "red");
+		$("#tveganje").css("color", "black");			
+		stran_aktivnosti="https://www.e-gibalec.si/api2/index/"+mera+"qqq"+indeks;
+		google.charts.load('current', {'packages':['line']});
+		google.charts.setOnLoadCallback(drawChart);
+	})	
+	$("#trebuh").click(function(){
+		mera="DT";
+		$("#masa").css("color", "black");
+		$("#visina").css("color", "black");
+		$("#bmi").css("color", "black");
+		$("#trebuh").css("color", "red");
+		$("#tek").css("color", "black");
+		$("#tveganje").css("color", "black");		
+		stran_aktivnosti="https://www.e-gibalec.si/api2/index/"+mera+"qqq"+indeks;
+		google.charts.load('current', {'packages':['line']});
+		google.charts.setOnLoadCallback(drawChart);
+	})
+	$("#tveganje").click(function(){
+		mera="T600";
+		$("#masa").css("color", "black");
+		$("#visina").css("color", "black");
+		$("#bmi").css("color", "black");
+		$("#trebuh").css("color", "black");
+		$("#tveganje").css("color", "red");
+		$("#tek").css("color", "black");			
+
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(drawChart_risk);
+	})
+	
+	})
+	
+	
+	
+	
+    </script>
+  </head>
+  <body>
+<div class="container">
+	<center>
+	<h1>Forecasting</h1>
+
+    <div id="linechart_material" style="width: 1300px; height: 500px" align="left"></div>
+
+
+	</center>
+
+
+  <h2>Input index of person</h2>
+ 
+    <div class="form-group">
+      <input type="text" class="form-control" id="indeks" placeholder="index" name="index">
+	</div>
+    
+
+  <button   id="submit">Submit</button>
+
+  <h2 id="ime">The current index is 1900</h2>
+  <p>Click on table column to show it's Graph</p>            
+  <table class="table">
+    <thead>
+      <tr>
+        <th id="masa">Mass</th>
+        <th id="visina">Height</th>
+        <th id="bmi">BMI</th>
+		
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th id="tek">600 meter dash</th>
+        <th id="trebuh">sit up</th>
+		<th id="tveganje">Risk</th>
+      </tr>
+ 
+    </tbody>
+  </table>
+</div>
+	
+  </body>
+</html>
